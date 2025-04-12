@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fleet Manager AI - ChatBot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: #f8fafc;
+      min-height: 100vh;
+      color: #1e293b;
+      overflow-x: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    /* Container */
+    .container {
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* Chatbot Section */
+    .section {
+      background: url('https://i.imgur.com/xyz123.jpg') no-repeat center center; /* Replace with actual image URL */
+      background-size: cover;
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      animation: slideIn 0.8s ease-in-out;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.85);
+      z-index: 1;
+    }
+
+    .section > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    .section:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .section h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 0.75rem;
+      text-align: center;
+    }
+
+    .section p {
+      font-size: 1rem;
+      color: #475569;
+      line-height: 1.7;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Chat History */
+    #chatHistory {
+      max-height: 400px;
+      overflow-y: auto;
+      padding: 1rem;
+      background: rgba(241, 245, 249, 0.95);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .message {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      max-width: 70%;
+    }
+
+    .user-message {
+      background: #1d4ed8;
+      color: #ffffff;
+      align-self: flex-end;
+    }
+
+    .ai-message {
+      background: #e2e8f0;
+      color: #1e293b;
+      align-self: flex-start;
+    }
+
+    /* Input Area */
+    #chatbot textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      resize: none;
+      font-size: 1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    #chatbot textarea:focus {
+      outline: none;
+      border-color: #1d4ed8;
+      box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.1);
+    }
+
+    #chatbot button {
+      padding: 0.75rem 2rem;
+      background: #1d4ed8;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      margin: 1rem auto 0;
+      display: block;
+    }
+
+    #chatbot button:hover {
+      background: #1e40af;
+      transform: translateY(-3px);
+    }
+
+    /* Floating Icons */
+    .floating-icons {
+      position: fixed;
+      font-size: 2rem;
+      opacity: 0.15;
+      animation: float 5s ease-in-out infinite;
+      user-select: none;
+      color: #1d4ed8;
+    }
+
+    .icon1 {
+      top: 10%;
+      left: 2%;
+    }
+
+    .icon2 {
+      bottom: 10%;
+      right: 2%;
+    }
+
+    /* Animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      .section {
+        padding: 1.5rem;
+      }
+
+      .section h2 {
+        font-size: 1.5rem;
+      }
+
+      #chatHistory {
+        max-height: 300px;
+      }
+
+      #chatbot button {
+        padding: 0.75rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="chatbot" class="section">
+      <h2>AI ChatBot</h2>
+      <p>Interact with our intelligent assistant to manage your fleet effortlessly, from scheduling trips to tracking maintenance.</p>
+      <div>
+        <div id="chatHistory"></div>
+        <textarea id="userMessage" placeholder="Ask about your fleet..."></textarea>
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="floating-icons icon1">🚛</div>
+  <div class="floating-icons icon2">📍</div>
+
+  <script>
+    async function sendMessage() {
+      const userMsg = document.getElementById("userMessage").value.trim();
+      const chatHistory = document.getElementById("chatHistory");
+
+      if (!userMsg) {
+        alert("Please enter a message.");
+        return;
+      }
+
+      // Add user message to chat history
+      const userDiv = document.createElement("div");
+      userDiv.className = "message user-message";
+      userDiv.textContent = `You: ${userMsg}`;
+      chatHistory.appendChild(userDiv);
+      chatHistory.scrollTop = chatHistory.scrollHeight; // Auto-scroll to latest message
+
+      // Clear textarea
+      document.getElementById("userMessage").value = "";
+
+      try {
+        const response = await fetch("http://127.0.0.1:5000/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ message: userMsg })
+        });
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const data = await response.json();
+        const aiResponse = data.response;
+
+        // Add AI response to chat history
+        const aiDiv = document.createElement("div");
+        aiDiv.className = "message ai-message";
+        aiDiv.textContent = `AI: ${aiResponse}`;
+        chatHistory.appendChild(aiDiv);
+        chatHistory.scrollTop = chatHistory.scrollHeight; // Auto-scroll to latest message
+      } catch (error) {
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "message ai-message";
+        errorDiv.textContent = `AI: An error occurred: ${error.message}`;
+        chatHistory.appendChild(errorDiv);
+        chatHistory.scrollTop = chatHistory.scrollHeight; // Auto-scroll to latest message
+      }
+    }
+
+    // Allow Enter key to send message
+    document.getElementById("userMessage").addEventListener("keypress", function(e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
