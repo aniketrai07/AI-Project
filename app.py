@@ -23,7 +23,7 @@ def chat():
     try:
         model = genai.GenerativeModel(
             'gemini-2.0-flash',
-            system_instruction="You are a friendly fleet management assistant. Respond only to queries related to vehicles, drivers, trips, maintenance, and fleet operations. For unrelated topics or greetings (e.g., 'hi'), acknowledge the user and gently steer the conversation back to fleet management topics. Keep responses concise and professional."
+         system_instruction="You are a friendly fleet management assistant. Respond only to queries related to vehicles, drivers, trips, maintenance, and fleet operations. For unrelated topics or greetings (e.g., 'hi'), acknowledge the user and gently steer the conversation back to fleet management topics. Keep responses concise and professional."
         )
         response = model.generate_content(user_input)
         return jsonify({'response': response.text})
